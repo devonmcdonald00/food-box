@@ -1,7 +1,8 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-
+import { Link } from 'react-router-dom';
+import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -15,6 +16,13 @@ const useStyles = makeStyles((theme) => ({
     textfields: {
         margin: 8,
         width: 300
+    },
+    buttonGroup : {
+        marginTop: 20,
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'space-evenly',
+        padding: 10
     }
   }));
 
@@ -60,6 +68,12 @@ export default function SignInForm() {
                     placeholder="input password"
                     className={classes.textfields}
                 />
+                <div className={classes.buttonGroup}>
+                    <Button style={{margin: 30, width: 'fit-content', background: '#aaf0d1'}}>Sign In</Button>
+                    <Link to='/register' style={{textDecoration: 'none'}}>
+                        <Button style={{margin: 30, width: 'fit-content', background: '#aaf0d1'}}>Register</Button>
+                    </Link>
+                </div>
            </form>
         </div>
     )
