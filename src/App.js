@@ -19,7 +19,7 @@ function App() {
           <Route exact path='/register'>
             <RegisterPage/>
           </Route>
-          <Route exact path='food-box-home'>
+          <Route exact path='/food-box-home'>
             <FoodboxPage/>
           </Route>
         </Switch>

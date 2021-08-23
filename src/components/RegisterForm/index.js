@@ -3,6 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import { Button } from '@material-ui/core';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { Message } from 'semantic-ui-react'
+import { useHistory } from "react-router-dom";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -50,17 +51,20 @@ export default function RegisterForm() {
     const classes = useStyles();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPass, setConfirmPass] = useState('');
     const [error, setError] = useState({display: 0, header: "", message: ""});
+    const history = useHistory();
 
     const addUser = async (e) => {
-      console.log(e)
       e.preventDefault();
-      if(e.target[1].value !== e.target[2].value){
+      console.log(e.target[0]['value'])
+      setUsername(e.target[0]['value'])
+      setPassword(e.target[1]['value'])
+      if(e.target[1]['value'] !== e.target[2]['value']){
           console.log("The password fields must match");
           setError({display: 1, header: "Confirm Password Must Match", message: "Make sure password and confirm password firelds match"})
       }
       else{
+          console.log(username)
           const userExists = await fetch('http://localhost:8090/user_exists', {
               method: 'POST',
               mode: 'cors',
@@ -69,11 +73,31 @@ export default function RegisterForm() {
                   'Accept-Encoding': 'gzip, deflate, br',
               },
               body: JSON.stringify({
-                  "username" : username
+                  "username" : e.target[0]['value']
               })
           })
           const userExistsResponse = await userExists.json()
-          console.log(userExistsResponse);
+          console.log(userExistsResponse)
+          if(userExistsResponse){
+            setError({display: 1, header: "Username Already Exists", message: "The input username is already in use. Please input another username"})
+          }
+          else{
+            console.log('form is valid... add user');
+            const addUser = await fetch('http://localhost:8090/add_user', {
+              method: 'POST',
+              mode: 'cors',
+              headers : {
+                  'Content-Type': 'application/json',
+                  'Accept-Encoding': 'gzip, deflate, br',
+              },
+              body: JSON.stringify({
+                  "username" : e.target[0]['value'],
+                  "password" : e.target[1]['value']
+              })
+            })
+            const adduserResponse = await addUser.json();
+            history.push({pathname: '/', state: {from: 'register'}});
+          }
       }
         
     }
