@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { alpha, makeStyles, withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { Button, Grid, InputBase, Paper } from '@material-ui/core';
+import { Button, Grid, InputBase, Paper, Typography } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux'
 import { change_name, change_cuisine, change_description, change_imageurl, change_price } from '../../state/productEditSlice'
 import AddProductForm from '../../components/AddProductForm';
+import CuisineForm from '../../components/CuisineForm';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -23,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
     },
     productDisplay: {
         display: 'flex',
-        padding: 30,
         alignItems: 'center',
         justifyContent: 'space-evenly'
     },
@@ -73,6 +73,18 @@ const useStyles = makeStyles((theme) => ({
         transition: theme.transitions.create('width'),
         width: '100%',
       },
+      editProductContainer: {
+        width: '90%',
+        padding: 20,
+        margin: 'auto',
+      },
+      formTitle: {
+        fontSize: 25,
+        color: '#013220',
+        paddingTop: 50,
+        paddingBottom: 5,
+        textAlign: 'center'
+    },
   }));
 
 const StyledTextField = withStyles({
@@ -151,24 +163,27 @@ export default function AdminPage() {
     return (
         <div>
             <AddProductForm getProducts={() => getProducts()}/>
-            <div className={classes.search} style={{width: '100%', display: 'flex'}}>
-              <div style={{margin: 'auto', width: '80%'}}>
-              <div className={classes.searchIcon}>
-                    <SearchIcon />
+            <CuisineForm/>
+            <Paper className={classes.editProductContainer}>
+              <Typography className={classes.formTitle}>Edit Product</Typography>
+              <div className={classes.search} style={{width: '100%', display: 'flex'}}>
+                <div style={{margin: 'auto', width: '80%'}}>
+                <div className={classes.searchIcon}>
+                      <SearchIcon />
+                  </div>
+                  <InputBase
+                      placeholder="Search for product name here..."
+                      classes={{
+                          root: classes.inputRoot,
+                          input: classes.inputInput,
+                      }}
+                      inputProps={{ 'aria-label': 'search' }}
+                      onChange={e => setSearch(e.target.value)}
+                  />
                 </div>
-                <InputBase
-                    placeholder="Search for product name here..."
-                    classes={{
-                        root: classes.inputRoot,
-                        input: classes.inputInput,
-                    }}
-                    inputProps={{ 'aria-label': 'search' }}
-                    onChange={e => setSearch(e.target.value)}
-                />
+                  
               </div>
-                
-            </div>
-            <div className={classes.productDisplay}>
+              <div className={classes.productDisplay}>
                 {
                     search.length !== 0 ?
                     <Grid item spacing={10}>
@@ -182,6 +197,7 @@ export default function AdminPage() {
                                           <p>Price: {"$" + product.price.toString()}</p>
                                           <p>Description: {product.description}</p>
                                           <p>Cuisine: {product.cuisine}</p>
+                                          <p>Enabled: {product.enabled.toString()}</p>
                                           <img src={product.imageurl} style={{height: 50, width: 'fit-content', marginBottom: 10}} alt=''/>
                                           <Button id={product.name} onClick={e => productEdit(product)} style={{marginTop: 5, width: 'fit-content', background: '#aaf0d1'}}>Edit</Button>
                                       </Paper>
@@ -202,6 +218,7 @@ export default function AdminPage() {
                                     <p>Price: {"$" + product.price.toString()}</p>
                                     <p style={{textAlign: 'center'}}>Description: {product.description}</p>
                                     <p>Cuisine: {product.cuisine}</p>
+                                    <p>Enabled: {product.enabled.toString()}</p>
                                     <img src={product.imageurl} style={{height: 50, width: 'fit-content', marginBottom: 10}} alt=''/>
                                     <Button id={product.name} onClick={e => productEdit(product)} style={{marginTop: 5, width: 'fit-content', background: '#aaf0d1'}}>Edit</Button>
                                 </Paper>
@@ -212,6 +229,7 @@ export default function AdminPage() {
                     </Grid>
                 }
             </div>
+          </Paper>
         </div>
     )
 }
