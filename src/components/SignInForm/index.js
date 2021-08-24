@@ -103,7 +103,11 @@ export default function SignInForm(props) {
             console.log(signInResponse)
             if(signInResponse){
                 console.log("successfully signed in");
-                history.push('/food-box-home')
+                const user = JSON.stringify({
+                    username: e.target[0]['value']
+                })
+                localStorage.setItem('username', user)
+                history.push({pathname: '/food-box-home', state: {username: e.target[0]['value']}})
             }
             else{
                 console.log("There was an error signing in");

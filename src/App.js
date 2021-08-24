@@ -4,7 +4,9 @@ import SignInPage from './pages/SignInPage';
 import Appbar from './components/Appbar';
 import RegisterPage from './pages/RegisterPage';
 import FoodboxPage from './pages/FoodboxPage';
+import AdminPage from './pages/AdminPage';
 import { HashRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import ProductEditPage from './pages/ProductEditPage';
 
 function App() {
   document.body.style = 'background: #f3f3f2';
@@ -21,6 +23,12 @@ function App() {
           </Route>
           <Route exact path='/food-box-home'>
             <FoodboxPage/>
+          </Route>
+          <Route exact path='/admin'>
+            <AdminPage/>
+          </Route>
+          <Route exact path='/product-edit'>
+            <ProductEditPage/>
           </Route>
         </Switch>
       </Router>
