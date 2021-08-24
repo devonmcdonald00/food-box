@@ -21,6 +21,9 @@ const useStyles = makeStyles((theme) => ({
     foodImage: {
         height: 50,
         width: 50
+    },
+    toolBar: {
+        justifyContent: 'space-between'
     }
   }));
 
@@ -30,14 +33,16 @@ export default function Appbar() {
     return (
         <div className={classes.root}>
             <AppBar position="static" className={classes.appBar}>
-                <Toolbar variant="dense">
-                <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                    <MenuIcon/>
-                </IconButton>
-                <Typography variant="h6" color="inherit" style={{alignSelf: 'center', margin: 'auto', fontWeight: 700}}>
-                    Food Box Delivery
-                </Typography>
-                <img src='https://static.thenounproject.com/png/98709-200.png' alt='' className={classes.foodImage}/>
+                <Toolbar className={classes.toolBar}>
+                    <div style={{display: 'flex'}}>
+                        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+                            <MenuIcon/>
+                        </IconButton>
+                        <Typography variant="h6" color="inherit" style={{alignSelf: 'center', margin: 'auto', fontWeight: 500}}>
+                            Food Box Delivery
+                        </Typography>
+                    </div>
+                    <img src='https://static.thenounproject.com/png/98709-200.png' alt='' className={classes.foodImage}/>
                 </Toolbar>
             </AppBar>
         </div>

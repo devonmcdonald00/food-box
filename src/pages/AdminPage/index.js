@@ -4,6 +4,8 @@ import TextField from '@material-ui/core/TextField';
 import { Button, Grid, InputBase, Paper } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { Link, useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux'
+import { change_name, change_cuisine, change_description, change_imageurl, change_price } from '../../state/productEditSlice'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -45,10 +47,7 @@ const useStyles = makeStyles((theme) => ({
         marginRight: 0,
         marginLeft: 0,
         width: '100%',
-        [theme.breakpoints.up('sm')]: {
-          marginLeft: theme.spacing(3),
-          width: 'auto',
-        },
+        display: 'flex',
       },
       searchIcon: {
         padding: theme.spacing(0, 2),
@@ -61,10 +60,10 @@ const useStyles = makeStyles((theme) => ({
       },
       inputRoot: {
         color: 'inherit',
-        width: '90%',
+        width: '100%',
         background: 'lightgray',
         opacity: .6,
-        borderRadius: 5
+        borderRadius: 5,
       },
       inputInput: {
         padding: theme.spacing(1, 1, 1, 0),
@@ -72,9 +71,6 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
         transition: theme.transitions.create('width'),
         width: '100%',
-        [theme.breakpoints.up('md')]: {
-          width: '20ch',
-        },
       },
   }));
 
@@ -106,6 +102,7 @@ export default function AdminPage() {
     const history = useHistory();
     const [products, setProducts] = useState([]);
     const [search, setSearch] = useState([]);
+    const dispatch = useDispatch()
 
     useEffect(() => {
         const getProducts = async () => {
@@ -128,7 +125,12 @@ export default function AdminPage() {
 
     const productEdit = (product) => {
         console.log(product)
-        history.push({pathname: '/product-edit', state: {product: JSON.stringify(product)}})
+        dispatch(change_name(product.name))
+        dispatch(change_cuisine(product.cuisine))
+        dispatch(change_description(product.description))
+        dispatch(change_price(product.price))
+        dispatch(change_imageurl(product.imageurl))
+        history.push('/product-edit')
     }
 
     return (
@@ -136,8 +138,9 @@ export default function AdminPage() {
             <form>
 
             </form>
-            <div className={classes.search} style={{width: '100%'}}>
-                <div className={classes.searchIcon}>
+            <div className={classes.search} style={{width: '100%', display: 'flex'}}>
+              <div style={{margin: 'auto', width: '80%'}}>
+              <div className={classes.searchIcon}>
                     <SearchIcon />
                 </div>
                 <InputBase
@@ -149,6 +152,8 @@ export default function AdminPage() {
                     inputProps={{ 'aria-label': 'search' }}
                     onChange={e => setSearch(e.target.value)}
                 />
+              </div>
+                
             </div>
             <div className={classes.productDisplay}>
                 {
@@ -161,7 +166,8 @@ export default function AdminPage() {
                                     <p>Price: ${product.price}</p>
                                     <p>Description: {product.description}</p>
                                     <p>Cuisine: {product.cuisine}</p>
-                                    <Button id={product.name} style={{marginTop: 5, width: 'fit-content', background: '#aaf0d1'}}>Edit</Button>
+                                    <img src={product.imageurl} style={{height: 50, width: 'fit-content', marginBottom: 10}} alt=''/>
+                                    <Button id={product.name} onClick={e => productEdit(product)} style={{marginTop: 5, width: 'fit-content', background: '#aaf0d1'}}>Edit</Button>
                                 </Paper>
                             )
                         }
