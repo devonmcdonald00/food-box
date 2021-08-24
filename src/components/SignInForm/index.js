@@ -6,6 +6,8 @@ import { Button } from '@material-ui/core';
 import { useHistory } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { Message } from 'semantic-ui-react'
+import { useSelector, useDispatch } from 'react-redux';
+import { set_username, set_admin } from '../../state/userSlice'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -60,6 +62,8 @@ export default function SignInForm(props) {
     const location = useLocation();
     const history = useHistory();
 
+    const dispatch = useDispatch();
+
     useEffect(() => {
         if(location.state){
             console.log(location.state.from)
@@ -106,7 +110,6 @@ export default function SignInForm(props) {
                 const user = JSON.stringify({
                     username: e.target[0]['value']
                 })
-                localStorage.setItem('username', user)
                 history.push({pathname: '/food-box-home', state: {username: e.target[0]['value']}})
             }
             else{
@@ -125,7 +128,7 @@ export default function SignInForm(props) {
     const classes = useStyles();
     return (
         <div>
-           <form className={classes.root} noValidate onSubmit={e => checkSignIn(e)}>
+           <form className={classes.root} onSubmit={e => checkSignIn(e)}>
             <StyledTextField
                     required
                     id="username"

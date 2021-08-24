@@ -6,6 +6,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux'
 import { change_name, change_cuisine, change_description, change_imageurl, change_price } from '../../state/productEditSlice'
+import AddProductForm from '../../components/AddProductForm';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -27,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'space-evenly'
     },
     paper: {
-        width: '30%',
+        width: 350,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -123,6 +124,20 @@ export default function AdminPage() {
 
     }, [])
 
+    const getProducts = async () => {
+      const products = await fetch("http://localhost:8090/get_products", {
+          method: "GET",
+          mode: 'cors',
+          headers : {
+              'Content-Type': 'application/json',
+              'Accept-Encoding': 'gzip, deflate, br',
+          },
+      })
+      const productsResponse = await products.json()
+      setProducts(productsResponse);
+      console.log(products);
+    }
+
     const productEdit = (product) => {
         console.log(product)
         dispatch(change_name(product.name))
@@ -135,9 +150,7 @@ export default function AdminPage() {
 
     return (
         <div>
-            <form>
-
-            </form>
+            <AddProductForm getProducts={() => getProducts()}/>
             <div className={classes.search} style={{width: '100%', display: 'flex'}}>
               <div style={{margin: 'auto', width: '80%'}}>
               <div className={classes.searchIcon}>
@@ -158,33 +171,45 @@ export default function AdminPage() {
             <div className={classes.productDisplay}>
                 {
                     search.length !== 0 ?
-                    products.map((product) => {
-                        if(product.name.substring(0, search.length) === search){
+                    <Grid item spacing={10}>
+                      <Grid container justify="center" spacing={10} style={{marginTop: 20, marginBottom: 20}}>
+                        {products.map((product, i) => {
+                            if(product.name.substring(0, search.length) === search){
+                                return (
+                                    <Grid key={i} item>
+                                      <Paper className={classes.paper}>
+                                          <h3>{product.name}</h3>
+                                          <p>Price: {"$" + product.price.toString()}</p>
+                                          <p>Description: {product.description}</p>
+                                          <p>Cuisine: {product.cuisine}</p>
+                                          <img src={product.imageurl} style={{height: 50, width: 'fit-content', marginBottom: 10}} alt=''/>
+                                          <Button id={product.name} onClick={e => productEdit(product)} style={{marginTop: 5, width: 'fit-content', background: '#aaf0d1'}}>Edit</Button>
+                                      </Paper>
+                                    </Grid>
+                                )
+                            }
+                        })}
+                      </Grid>
+                    </Grid>
+                    :
+                    <Grid item spacing={10}>
+                      <Grid container justify="center" spacing={10} style={{marginTop: 20, marginBottom: 20}}>
+                        {products.map((product, i) => {
                             return (
+                              <Grid key={i} item>
                                 <Paper className={classes.paper}>
                                     <h3>{product.name}</h3>
-                                    <p>Price: ${product.price}</p>
-                                    <p>Description: {product.description}</p>
+                                    <p>Price: {"$" + product.price.toString()}</p>
+                                    <p style={{textAlign: 'center'}}>Description: {product.description}</p>
                                     <p>Cuisine: {product.cuisine}</p>
                                     <img src={product.imageurl} style={{height: 50, width: 'fit-content', marginBottom: 10}} alt=''/>
                                     <Button id={product.name} onClick={e => productEdit(product)} style={{marginTop: 5, width: 'fit-content', background: '#aaf0d1'}}>Edit</Button>
                                 </Paper>
+                              </Grid>
                             )
-                        }
-                    })
-                    :
-                    products.map((product) => {
-                        return (
-                            <Paper className={classes.paper}>
-                                <h3>{product.name}</h3>
-                                <p>Price: {product.price}</p>
-                                <p style={{textAlign: 'center'}}>Description: {product.description}</p>
-                                <p>Cuisine: {product.cuisine}</p>
-                                <img src={product.imageurl} style={{height: 50, width: 'fit-content', marginBottom: 10}} alt=''/>
-                                <Button id={product.name} onClick={e => productEdit(product)} style={{marginTop: 5, width: 'fit-content', background: '#aaf0d1'}}>Edit</Button>
-                            </Paper>
-                        )
-                    })
+                        })}
+                      </Grid>
+                    </Grid>
                 }
             </div>
         </div>

@@ -7,7 +7,7 @@ export const productSlice = createSlice({
         price: 0,
         description: "",
         cuisine: "",
-        enabled: 0,
+        enabled: false,
         imageurl: ""
     },
     reducers: {

@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Button } from '@material-ui/core'
 import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { set_username, set_admin } from '../../state/userSlice'
 
 export default function FoodboxPage() {
 
     const location = useLocation();
     const [admin, setAdmin] = useState(0);
     const [username, setUsername] = useState(JSON.parse(localStorage.getItem('username'))['username'])
+    const dispatch = useDispatch();
 
     useEffect(() => {
         console.log(JSON.parse(localStorage.getItem('username'))['username'])
@@ -25,7 +28,10 @@ export default function FoodboxPage() {
             })
 
             const adminResponse = admin.json();
+            dispatch(set_admin(adminResponse))
+            dispatch(set_username(adminResponse));
             setAdmin(adminResponse);
+
         }
 
         getAdmin();
