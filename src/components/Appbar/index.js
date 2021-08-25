@@ -39,10 +39,17 @@ export default function Appbar() {
                             <MenuIcon/>
                         </IconButton>
                         <Typography variant="h6" color="inherit" style={{alignSelf: 'center', margin: 'auto', fontWeight: 500}}>
-                            Food Box Delivery
+                            <a style={{color: 'black'}} href='/'>
+                                Food Box Delivery
+                            </a>
                         </Typography>
                     </div>
-                    <img src='https://static.thenounproject.com/png/98709-200.png' alt='' className={classes.foodImage}/>
+                    <div style={{display: 'flex'}}>
+                        <Typography style={{alignSelf: 'center', marginRight: 10}}>
+                            Welcome {JSON.parse(localStorage.getItem('user'))['username']}!
+                        </Typography>
+                        <img src='https://static.thenounproject.com/png/98709-200.png' alt='' className={classes.foodImage}/>
+                    </div>
                 </Toolbar>
             </AppBar>
         </div>

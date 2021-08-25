@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { Message } from 'semantic-ui-react'
 import { useSelector, useDispatch } from 'react-redux';
-import { set_username, set_admin } from '../../state/userSlice'
+import { set_signedIn } from '../../state/userSlice'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -65,6 +65,11 @@ export default function SignInForm(props) {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        if(localStorage.getItem('user') !== null){
+            if(JSON.parse(localStorage.getItem('user'))['signedIn']){
+                history.push('/food-box-home')
+            }
+        }
         if(location.state){
             console.log(location.state.from)
             if(location.state.from === 'register'){
@@ -108,8 +113,10 @@ export default function SignInForm(props) {
             if(signInResponse){
                 console.log("successfully signed in");
                 const user = JSON.stringify({
-                    username: e.target[0]['value']
+                    username: e.target[0]['value'],
+                    signedIn: true
                 })
+                localStorage.setItem('user', user)
                 history.push({pathname: '/food-box-home', state: {username: e.target[0]['value']}})
             }
             else{

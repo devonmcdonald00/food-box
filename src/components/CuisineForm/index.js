@@ -67,6 +67,7 @@ export default function CuisineForm(props) {
     const classes = useStyles();
     const [cuisines, setCuisines] = useState(props.cuisines)
     const [newCuisine, setNewCuisine] = useState("");
+    const [newCuisineImageURL, setNewCuisineImageURL] = useState("");
 
     useEffect(() => {
         setCuisines(props.cuisines)
@@ -108,13 +109,38 @@ export default function CuisineForm(props) {
             },
             body: JSON.stringify({
                 "cuisine": newCuisine,
-                "enabled": "true"
+                "enabled": "true",
+                "flag_image_url": newCuisineImageURL
             })
         })
 
         const addCuisineResponse = await addCuisine.json();
 
         if(addCuisineResponse){
+            console.log("success")
+            props.getCuisines();
+        }
+        else{
+            console.log("error")
+        }
+    }
+
+    const deleteCuisine = async (cuisine) => {
+        const deleteCuisine = await fetch('http://localhost:8090/delete_cuisine', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept-Encoding': 'gzip, deflate, br',
+            },
+            body: JSON.stringify({
+                "cuisine": cuisine.cuisine,
+            })
+        })
+
+        const deleteCuisineResponse = await deleteCuisine.json();
+
+        if(deleteCuisineResponse){
             console.log("success")
             props.getCuisines();
         }
@@ -144,15 +170,34 @@ export default function CuisineForm(props) {
                         labelPlacement="start"
                         className={classes.cuisineControlLabel}
                     />
+                    <CuisineControlLabel
+                        control={
+                            <StyledTextField
+                                id="cuisine_image"
+                                label="Cuisine image URL"
+                                placeholder="New cuisine image URL"
+                                className={classes.textfields}
+                                value={newCuisineImageURL}
+                                onChange={(e) => setNewCuisineImageURL(e.target.value)}
+                            />
+                        }
+                        label="Cuisine URL: "
+                        labelPlacement="start"
+                        className={classes.cuisineControlLabel}
+                        style={{marginLeft: 30}}
+                    />
                     <Button style={{marginLeft: 30, width: 'fit-content', background: '#aaf0d1', height: 30, alignSelf: 'center'}} onClick={() => addCuisine()}>Add</Button>
                 </div>
-                <div style={{display: 'flex', justifyContent: 'space-evenly', padding: 15}}>
+                <div style={{display: 'flex', justifyContent: cuisines.length > 4 ? 'space-between' : 'space-evenly', padding: 30}}>
                     {
                         cuisines.length !== 0 ? 
                         cuisines.map((cuisine) => {
                            return(
-                               <div>
-                                   <h4 style={{textAlign: 'center'}}>{cuisine.cuisine}</h4>
+                               <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column'}}>
+                                   <div style={{display: 'flex', justifyContent: 'center'}}>
+                                        <h4 style={{textAlign: 'center', margin: 'auto', marginRight: 10}}>{cuisine.cuisine}</h4>
+                                        <img src={cuisine.flagImageURL} style={{height: 30, width: 'fit-content', borderRadius: '50%'}}/>
+                                   </div>
                                    <FormControlLabel
                                         control={
                                             <GreenSwitch
@@ -165,6 +210,7 @@ export default function CuisineForm(props) {
                                         label="Enabled"
                                         style={{margin: 10}}
                                     />
+                                    <Button onClick={() => deleteCuisine(cuisine)} style={{margin: 'auto', marginTop: 10, width: 'fit-content', background: '#aaf0d1'}}>Delete</Button>
                                </div>
                            )
                         })

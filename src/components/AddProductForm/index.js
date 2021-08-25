@@ -91,8 +91,6 @@ export default function AddProductForm(props) {
     const [cuisines, setCuisines] = useState(props.cuisines)
 
     useEffect(() => {
-        console.log("rerender")
-        console.log(props.cuisines)
         setCuisines(props.cuisines)
     }, [props])
 
