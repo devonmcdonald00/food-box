@@ -11,8 +11,8 @@ export const productSlice = createSlice({
         imageurl: ""
     },
     reducers: {
-        enable_disable: (state) => {
-            state.enabled = !state.enabled;
+        change_enable: (state, action) => {
+            state.enabled = action.payload;
         },
         change_name: (state, action) => {
             state.name = action.payload;
@@ -32,6 +32,6 @@ export const productSlice = createSlice({
     }
 })
 
-export const { enable_disable, change_name, change_cuisine, change_price, change_description, change_imageurl } = productSlice.actions
+export const { change_enable, change_name, change_cuisine, change_price, change_description, change_imageurl } = productSlice.actions
 
 export default productSlice.reducer

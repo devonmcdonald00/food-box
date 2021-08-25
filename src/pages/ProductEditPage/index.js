@@ -142,6 +142,7 @@ export default function ProductEditPage() {
                         className={classes.textfields}
                         type="number"
                         value={price}
+                        step="0.01"
                         onChange={(e) => {setPrice(e.target.value)}}
                     />
                     <StyledTextField
@@ -177,7 +178,7 @@ export default function ProductEditPage() {
                                 id="enabled"
                                 label="Enabled"
                                 checked={enabled}
-                                onChange={() => setEnabled(!enabled)}
+                                onChange={() => {setEnabled(!enabled)}}
                             />
                         }
                         label="Enabled"

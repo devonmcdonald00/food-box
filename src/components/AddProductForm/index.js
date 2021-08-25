@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import { Button, Switch, FormControlLabel, Paper, Typography } from '@material-ui/core';
+import { Button, Switch, FormControlLabel, Paper, Typography, Select, MenuItem, InputBase } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import { Message } from 'semantic-ui-react'
 
@@ -60,6 +60,25 @@ const StyledTextField = withStyles({
 
   })(TextField);
 
+
+  const BootstrapInput = withStyles((theme) => ({
+    input: {
+      width: 270,
+      borderRadius: 4,
+      position: 'relative',
+      backgroundColor: theme.palette.background.paper,
+      border: '1px solid #013220',
+      fontSize: 16,
+      padding: '10px 26px 10px 12px',
+      transition: theme.transitions.create(['border-color', 'box-shadow']),
+      '&:focus': {
+        borderRadius: 4,
+        borderColor: '#013220',
+      },
+    },
+  }))(InputBase);
+
+
 export default function AddProductForm(props) {
     const classes = useStyles();
     const [success, setSuccess] = useState(0)
@@ -69,7 +88,13 @@ export default function AddProductForm(props) {
     const [cuisine, setCuisine] = useState("")
     const [description, setDescription] = useState("")
     const [imageurl, setImageUrl] = useState("")
+    const [cuisines, setCuisines] = useState(props.cuisines)
 
+    useEffect(() => {
+        console.log("rerender")
+        console.log(props.cuisines)
+        setCuisines(props.cuisines)
+    }, [props])
 
     const addProduct = async (e) => {
         e.preventDefault();
@@ -140,6 +165,23 @@ export default function AddProductForm(props) {
                             value={description}
                             onChange={(e) => {setDescription(e.target.value)}}
                         />
+                        <Select
+                            labelId="cuisine"
+                            id="cuisine-select"
+                            value={cuisine}
+                            onChange={(e) => {setCuisine(e.target.value)}}
+                            input={<BootstrapInput/>}
+                            style={{marginTop: 20}}
+                        >
+                            {
+                                props.cuisines &&
+                                props.cuisines.map((cuisine) => {
+                                    return(
+                                        <MenuItem value={cuisine.cuisine}>{cuisine.cuisine}</MenuItem>
+                                    )
+                                })
+                            }
+                        </Select>
                         <StyledTextField
                             required
                             id="cuisine"

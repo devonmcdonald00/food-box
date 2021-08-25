@@ -5,7 +5,7 @@ import { Button, Grid, InputBase, Paper, Typography } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux'
-import { change_name, change_cuisine, change_description, change_imageurl, change_price } from '../../state/productEditSlice'
+import { change_name, change_cuisine, change_description, change_imageurl, change_price, change_enable } from '../../state/productEditSlice'
 import AddProductForm from '../../components/AddProductForm';
 import CuisineForm from '../../components/CuisineForm';
 
@@ -116,6 +116,7 @@ export default function AdminPage() {
     const [products, setProducts] = useState([]);
     const [search, setSearch] = useState([]);
     const dispatch = useDispatch()
+    const [cuisines, setCuisines] = useState([])
 
     useEffect(() => {
         const getProducts = async () => {
@@ -129,10 +130,20 @@ export default function AdminPage() {
             })
             const productsResponse = await products.json()
             setProducts(productsResponse);
-            console.log(products);
         }
 
+        const getCuisines = async () => {
+          const cuisines = await fetch('http://localhost:8090/get_cuisines', {
+              method: 'GET',
+              mode: 'cors',
+          })
+          
+          const cuisinesResponse = await cuisines.json();
+          setCuisines(cuisinesResponse)
+      }
+
         getProducts();
+        getCuisines();
 
     }, [])
 
@@ -147,23 +158,57 @@ export default function AdminPage() {
       })
       const productsResponse = await products.json()
       setProducts(productsResponse);
-      console.log(products);
     }
 
+    const getCuisines = async () => {
+      const cuisines = await fetch('http://localhost:8090/get_cuisines', {
+          method: 'GET',
+          mode: 'cors',
+      })
+      
+      const cuisinesResponse = await cuisines.json();
+      console.log('here')
+      setCuisines(cuisinesResponse)
+  }
+
     const productEdit = (product) => {
-        console.log(product)
         dispatch(change_name(product.name))
         dispatch(change_cuisine(product.cuisine))
         dispatch(change_description(product.description))
         dispatch(change_price(product.price))
         dispatch(change_imageurl(product.imageurl))
+        dispatch(change_enable(product.enabled))
         history.push('/product-edit')
+    }
+
+    const productDelete = async (product) => {
+      const deleteProduct = await fetch('http://localhost:8090/delete_product', {
+        method: 'POST',
+        mode: 'cors',
+        headers : {
+          'Content-Type': 'application/json',
+          'Accept-Encoding': 'gzip, deflate, br',
+        },
+        body: JSON.stringify({
+          "name": product.name
+        })
+      })
+
+      const deleteProductResponse = await deleteProduct.json();
+
+      if(deleteProductResponse){
+        console.log("success")
+        getProducts();
+      }
+      else{
+        console.log("error")
+      }
     }
 
     return (
         <div>
-            <AddProductForm getProducts={() => getProducts()}/>
-            <CuisineForm/>
+            <AddProductForm getProducts={() => getProducts()} cuisines={cuisines}/>
+            <CuisineForm getProducts={() => getProducts()} getCuisines={() => getCuisines()} cuisines={cuisines}/>
             <Paper className={classes.editProductContainer}>
               <Typography className={classes.formTitle}>Edit Product</Typography>
               <div className={classes.search} style={{width: '100%', display: 'flex'}}>
@@ -219,8 +264,11 @@ export default function AdminPage() {
                                     <p style={{textAlign: 'center'}}>Description: {product.description}</p>
                                     <p>Cuisine: {product.cuisine}</p>
                                     <p>Enabled: {product.enabled.toString()}</p>
-                                    <img src={product.imageurl} style={{height: 50, width: 'fit-content', marginBottom: 10}} alt=''/>
-                                    <Button id={product.name} onClick={e => productEdit(product)} style={{marginTop: 5, width: 'fit-content', background: '#aaf0d1'}}>Edit</Button>
+                                    <img src={product.imageurl} style={{height: 50, width: 'fit-content', marginBottom: 20}} alt=''/>
+                                    <div style={{display: 'flex', justifyContent: 'space-evenly', width: 200}}>
+                                      <Button id={product.name} onClick={e => productEdit(product)} style={{marginTop: 5, width: 'fit-content', background: '#aaf0d1'}}>Edit</Button>
+                                      <Button id={product.name} onClick={e => productDelete(product)} style={{marginTop: 5, width: 'fit-content', background: '#aaf0d1'}}>Delete</Button>
+                                    </div>
                                 </Paper>
                               </Grid>
                             )
@@ -230,6 +278,7 @@ export default function AdminPage() {
                 }
             </div>
           </Paper>
+          <div style={{height: 40}}></div>
         </div>
     )
 }
