@@ -39,7 +39,7 @@ export default function Appbar() {
                             <MenuIcon/>
                         </IconButton>
                         <Typography variant="h6" color="inherit" style={{alignSelf: 'center', margin: 'auto', fontWeight: 500}}>
-                            <a style={{color: 'black'}} href='/'>
+                            <a style={{color: 'black', fontFamily: 'Staatliches', fontSize: 20}} href='/'>
                                 Food Box Delivery
                             </a>
                         </Typography>

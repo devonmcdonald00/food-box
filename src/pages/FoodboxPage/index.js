@@ -7,6 +7,7 @@ import { LocalGasStationRounded } from '@material-ui/icons'
 import { Button, Grid, InputBase, Paper, Typography } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { alpha, makeStyles, withStyles } from '@material-ui/core/styles';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -238,6 +239,7 @@ export default function FoodboxPage() {
                                                             <img src={flagMapping[product.cuisine]} style={{height: 30, width: 'fit-content', borderRadius: '50%'}}/>
                                                         </div>
                                                         <img src={product.imageurl} style={{ height: 300, width: 'fit-content', marginBottom: 20, borderRadius: 5 }} alt='' />
+                                                        <Button id={product.name} style={{marginTop: 5, marginBottom: 10, width: 'fit-content', background: '#aaf0d1', padding: 10}}>add to Cart <ShoppingCartIcon/></Button>
                                                     </Paper>
                                                 </Grid>
                                             )
