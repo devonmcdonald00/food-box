@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState, useEffect } from 'react'
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import { Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, ListItemIcon } from '@material-ui/core';
+import { Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemIcon, Badge } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Link, useHistory } from 'react-router-dom'
 import HomeIcon from '@material-ui/icons/Home';
@@ -26,7 +26,8 @@ const useStyles = makeStyles((theme) => ({
     },
     foodImage: {
         height: 50,
-        width: 50
+        width: 50,
+        marginLeft: 12,
     },
     toolBar: {
         justifyContent: 'space-between'
@@ -39,10 +40,22 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-export default function Appbar() {
+  const StyledBadge = withStyles((theme) => ({
+    badge: {
+      left: -3,
+      border: `1px solid gray`,
+      padding: '4px 4px',
+      background: `${theme.palette.background.paper}`,
+      color: 'black',
+    },
+  }))(Badge);
+
+export default function Appbar(props) {
     const classes = useStyles();
     const [openMenu, setOpenMenu] = useState(0);
     const history = useHistory();
+
+    useEffect(() => {}, [])
 
     const doAction = (action) => {
         if(action === 'home'){
@@ -74,6 +87,7 @@ export default function Appbar() {
                                 Food Box Delivery
                             </Link>
                         </Typography>
+                        <img src='https://static.thenounproject.com/png/98709-200.png' alt='' className={classes.foodImage}/>
                     </div>
                     <div style={{display: 'flex'}}>
                         {
@@ -84,13 +98,16 @@ export default function Appbar() {
                             :
                             <></>
                         }
-                        <Link style={{margin: 'auto', marginLeft: 10, marginRight: 10, color: 'black', position: 'relative'}}>
-                            <div style={{borderRadius: '50%', background: 'white', height: 20, width: 20, border: '1px solid black', position: 'absolute', zIndex: 100, top: -12, left: -14, display: 'flex'}}>
-                                <p style={{fontSize: 13}}>12</p>
-                            </div>
-                            <ShoppingCartIcon style={{transform: 'scale(1.5)'}}/>
-                        </Link>
-                        <img src='https://static.thenounproject.com/png/98709-200.png' alt='' className={classes.foodImage}/>
+                        {
+                            localStorage.getItem('cart') !== null &&
+                            <Link style={{margin: 'auto', color: 'black', position: 'relative'}} to='/cart'>
+                                <IconButton>
+                                    <StyledBadge badgeContent={props.cartCounter} color="secondary">
+                                        <ShoppingCartIcon />
+                                    </StyledBadge>
+                                </IconButton>
+                            </Link>
+                        }
                     </div>
                 </Toolbar>
                 <Drawer anchor={'left'} open={openMenu} onClose={() => setOpenMenu(0)} >

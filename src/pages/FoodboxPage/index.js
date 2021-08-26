@@ -33,7 +33,9 @@ const useStyles = makeStyles((theme) => ({
         alignText: 'center',
         justifyContent: 'center',
         margin: 20,
-        padding: 20
+        padding: 20,
+        border: '2px solid lightgray',
+        background: '#feffea'
     },
     search: {
         position: 'relative',
@@ -75,7 +77,8 @@ const useStyles = makeStyles((theme) => ({
         width: '90%',
         padding: 20,
         margin: 'auto',
-        marginTop: 70
+        marginTop: 70,
+        minWidth: 660,
       },
       formTitle: {
         fontSize: 30,
@@ -99,7 +102,7 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-export default function FoodboxPage() {
+export default function FoodboxPage({cartCounter, setCartCounter}) {
     const history = useHistory();
     const [admin, setAdmin] = useState(localStorage.getItem('admin') !== null ? JSON.parse(localStorage.getItem('admin'))['admin'] : false);
     const [username, setUsername] = useState(JSON.parse(localStorage.getItem('user'))['username'].toString())
@@ -111,6 +114,7 @@ export default function FoodboxPage() {
     const [flagMapping, setFlagMapping] = useState({})
     const [cuisineFilters, setCuisineFilters] = useState({})
     const [trigger, setTrigger] = useState(0)
+    const [cart, setCart] = useState({})
 
     useEffect(() => {
         const getAdmin = async () => {
@@ -162,7 +166,6 @@ export default function FoodboxPage() {
             
             const cuisinesResponse = await cuisines.json();
             setCuisines(cuisinesResponse)
-            console.log(cuisinesResponse)
             let flagMapping = {}
             let cuisineFilters = {}
             cuisinesResponse.map(cuisine => {
@@ -185,6 +188,33 @@ export default function FoodboxPage() {
         newCuisineFilters[cuisine] = !cuisineFilters[cuisine]
         setCuisineFilters(newCuisineFilters)
         setTrigger(!trigger)
+    }
+
+    const addToCart = (product) => {
+        
+        if(cart[product.name]){
+            let newCart = cart;
+            let newProduct = {
+                'quantity': cart[product.name]['quantity'] + 1,
+                'productTotal': cart[product.name]['productTotal'] + product.price
+            }
+            newCart[product.name] = newProduct
+            setCart(newCart)
+            localStorage.setItem('cart', JSON.stringify(cart))
+            setCartCounter(cartCounter+1)
+        }
+        else{
+            let newCart = cart;
+            let newProduct = {
+                'quantity': 1,
+                'productTotal': product.price
+            }
+            newCart[product.name] = newProduct;
+            setCart(newCart)
+            localStorage.setItem('cart', JSON.stringify(cart))
+            setCartCounter(cartCounter+1)
+        }
+        console.log(cart)
     }
 
     return (
@@ -248,6 +278,7 @@ export default function FoodboxPage() {
                                                                 <img src={flagMapping[product.cuisine]} style={{height: 30, width: 'fit-content', borderRadius: '50%'}}/>
                                                             </div>
                                                             <img src={product.imageurl} style={{ height: 250, width: 'fit-content', marginBottom: 20, borderRadius: 5 }} alt='' />
+                                                            <Button id={product.name} style={{marginTop: 5, marginBottom: 10, width: 'fit-content', background: '#aaf0d1', padding: 10}} onClick={() => addToCart(product)}>add to Cart <ShoppingCartIcon style={{marginLeft: 5}}/></Button>
                                                         </Paper>
                                                     </Grid>
                                                 )
@@ -273,7 +304,7 @@ export default function FoodboxPage() {
                                                                 <img src={flagMapping[product.cuisine]} style={{height: 30, width: 'fit-content', borderRadius: '50%'}}/>
                                                             </div>
                                                             <img src={product.imageurl} style={{ height: 250, width: 'fit-content', marginBottom: 20, borderRadius: 5 }} alt='' />
-                                                            <Button id={product.name} style={{marginTop: 5, marginBottom: 10, width: 'fit-content', background: '#aaf0d1', padding: 10}}>add to Cart <ShoppingCartIcon style={{marginLeft: 5}}/></Button>
+                                                            <Button id={product.name} style={{marginTop: 5, marginBottom: 10, width: 'fit-content', background: '#aaf0d1', padding: 10}} onClick={() => addToCart(product)}>add to Cart <ShoppingCartIcon style={{marginLeft: 5}}/></Button>
                                                         </Paper>
                                                     </Grid>
                                                 )
