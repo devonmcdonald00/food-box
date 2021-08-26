@@ -147,6 +147,7 @@ export default function SignInForm(props) {
                     required
                     id="password"
                     label="Password"
+                    type="password"
                     placeholder="input password"
                     className={classes.textfields}
                 />

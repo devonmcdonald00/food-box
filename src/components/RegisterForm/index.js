@@ -116,6 +116,7 @@ export default function RegisterForm() {
                     required
                     id="password"
                     label="Password"
+                    type="password"
                     placeholder="input password"
                     className={classes.textfields}
                 />
@@ -123,6 +124,7 @@ export default function RegisterForm() {
                     required
                     id="confirm-password"
                     label="Confirm Password"
+                    type="password"
                     placeholder="input password again"
                     className={classes.textfields}
                 />

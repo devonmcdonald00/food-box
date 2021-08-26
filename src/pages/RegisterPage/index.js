@@ -17,7 +17,8 @@ const useStyles = makeStyles((theme) => ({
         fontSize: 25,
         color: '#013220',
         paddingTop: 20,
-        paddingBottom: 5
+        paddingBottom: 5,
+        fontFamily: 'Staatliches'
     },
 }))
 export default function RegisterPage() {

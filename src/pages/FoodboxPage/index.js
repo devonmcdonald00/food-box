@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { useLocation, useHistory } from 'react-router-dom'
-import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { set_username, set_admin } from '../../state/userSlice'
-import { LocalGasStationRounded } from '@material-ui/icons'
-import { Button, Grid, InputBase, Paper, Typography } from '@material-ui/core';
+import { Button, Grid, InputBase, Paper, Typography, Chip } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import { alpha, makeStyles, withStyles } from '@material-ui/core/styles';
+import { alpha, makeStyles } from '@material-ui/core/styles';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 
@@ -88,11 +85,23 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'center',
         fontFamily: 'Staatliches'
     },
+    cuisineChips: {
+        display: 'flex',
+        width: '80%',
+        justifyContent: 'space-evenly',
+        marginTop: 30,
+        margin: 'auto',
+    },
+    cuisineChip: {
+        '&:hover': {
+            opacity: .8
+        }
+    }
   }));
 
 export default function FoodboxPage() {
     const history = useHistory();
-    const [admin, setAdmin] = useState(JSON.parse(localStorage.getItem('admin'))['admin']);
+    const [admin, setAdmin] = useState(localStorage.getItem('admin') !== null ? JSON.parse(localStorage.getItem('admin'))['admin'] : false);
     const [username, setUsername] = useState(JSON.parse(localStorage.getItem('user'))['username'].toString())
     const dispatch = useDispatch();
     const classes = useStyles();
@@ -100,7 +109,8 @@ export default function FoodboxPage() {
     const [search, setSearch] = useState([]);
     const [cuisines, setCuisines] = useState([])
     const [flagMapping, setFlagMapping] = useState({})
-
+    const [cuisineFilters, setCuisineFilters] = useState({})
+    const [trigger, setTrigger] = useState(0)
 
     useEffect(() => {
         const getAdmin = async () => {
@@ -154,28 +164,31 @@ export default function FoodboxPage() {
             setCuisines(cuisinesResponse)
             console.log(cuisinesResponse)
             let flagMapping = {}
+            let cuisineFilters = {}
             cuisinesResponse.map(cuisine => {
-                flagMapping[cuisine.cuisine] = cuisine.flagImageURL
+                flagMapping[cuisine.cuisine] = cuisine.flagImageURL;
+                cuisineFilters[cuisine.cuisine] = true;
+
             })
 
-            console.log(flagMapping)
             setFlagMapping(flagMapping);
+            setCuisineFilters(cuisineFilters);
         }
 
         getProducts();
         getCuisines();
+
     }, [])
+
+    const changeFilter = (cuisine) => {
+        let newCuisineFilters = cuisineFilters;
+        newCuisineFilters[cuisine] = !cuisineFilters[cuisine]
+        setCuisineFilters(newCuisineFilters)
+        setTrigger(!trigger)
+    }
 
     return (
         <div>
-            {
-                admin ?
-                    <Link to="/admin">
-                        <Button style={{ marginTop: 50, width: 'fit-content', background: 'gray', position: 'absolute', top: 30, right: 10, color: 'white' }}>Admin Management</Button>
-                    </Link>
-                    :
-                    <></>
-            }
             <div>
                 <Paper className={classes.productContainer}>
                     <Typography className={classes.formTitle}>Food Item Selection</Typography>
@@ -195,13 +208,33 @@ export default function FoodboxPage() {
                             />
                         </div>
                     </div>
+                    <div className={classes.cuisineChips}>
+                        {
+                            cuisines.map((cuisine) => {
+                                return(
+                                    <div>
+                                        <Chip
+                                            label={cuisine.cuisine}
+                                            clickable
+                                            className={classes.cuisineChip}
+                                            style={{fontSize: 13, fontFamily: 'Balsamiq Sans', background: cuisineFilters[cuisine.cuisine] ? '#aaf0d1' : 'gray', color: cuisineFilters[cuisine.cuisine] ? 'black' : 'white'}}
+                                            onClick={(e) => changeFilter(cuisine.cuisine)}
+                                        >
+                                            {cuisine.cuisine}
+                                        </Chip>
+                                    </div>
+
+                                )
+                            })
+                        }
+                    </div>
                     <div className={classes.productDisplay}>
                         {
                             search.length !== 0 ?
                                 <Grid item spacing={10}>
                                     <Grid container justify="center" spacing={10} style={{ marginTop: 20, marginBottom: 20 }}>
                                         {products.map((product, i) => {
-                                            if (product.name.substring(0, search.length) === search) {
+                                            if (product.enabled && cuisineFilters[product.cuisine] && product.name.substring(0, search.length).toLowerCase() === search.toLowerCase()) {
                                                 return (
                                                     <Grid key={i} item>
                                                         <Paper className={classes.paper}>
@@ -214,7 +247,7 @@ export default function FoodboxPage() {
                                                                 <p style={{fontSize: 19, fontWeight: 200, margin: 'auto', marginRight: 12}}>{product.cuisine + " Cuisine"}</p>
                                                                 <img src={flagMapping[product.cuisine]} style={{height: 30, width: 'fit-content', borderRadius: '50%'}}/>
                                                             </div>
-                                                            <img src={product.imageurl} style={{ height: 300, width: 'fit-content', marginBottom: 20, borderRadius: 5 }} alt='' />
+                                                            <img src={product.imageurl} style={{ height: 250, width: 'fit-content', marginBottom: 20, borderRadius: 5 }} alt='' />
                                                         </Paper>
                                                     </Grid>
                                                 )
@@ -226,23 +259,25 @@ export default function FoodboxPage() {
                                 <Grid item spacing={10}>
                                     <Grid container justify="center" spacing={10} style={{ marginTop: 20, marginBottom: 20 }}>
                                         {products.map((product, i) => {
-                                            return (
-                                                <Grid key={i} item>
-                                                    <Paper className={classes.paper}>
-                                                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 15}}>
-                                                            <h3 style={{fontFamily: 'Staatliches', fontSize: 30, margin: 'auto'}}>{product.name}</h3>
-                                                            <p style={{fontFamily: 'Staatliches', fontSize: 20, alignText: 'center', marginLeft: 10}}>{"$" + product.price.toString()}</p>
-                                                        </div>
-                                                        <p style={{fontSize: 19, fontWeight: 200}}>{product.description}</p>
-                                                        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 30}}>
-                                                            <p style={{fontSize: 19, fontWeight: 200, margin: 'auto', marginRight: 12}}>{product.cuisine + " Cuisine"}</p>
-                                                            <img src={flagMapping[product.cuisine]} style={{height: 30, width: 'fit-content', borderRadius: '50%'}}/>
-                                                        </div>
-                                                        <img src={product.imageurl} style={{ height: 300, width: 'fit-content', marginBottom: 20, borderRadius: 5 }} alt='' />
-                                                        <Button id={product.name} style={{marginTop: 5, marginBottom: 10, width: 'fit-content', background: '#aaf0d1', padding: 10}}>add to Cart <ShoppingCartIcon/></Button>
-                                                    </Paper>
-                                                </Grid>
-                                            )
+                                            if(product.enabled && cuisineFilters[product.cuisine]){
+                                                return (
+                                                    <Grid key={i} item>
+                                                        <Paper className={classes.paper}>
+                                                            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 15}}>
+                                                                <h3 style={{fontFamily: 'Staatliches', fontSize: 30, margin: 'auto'}}>{product.name}</h3>
+                                                                <p style={{fontFamily: 'Staatliches', fontSize: 20, alignText: 'center', marginLeft: 10}}>{"$" + product.price.toString()}</p>
+                                                            </div>
+                                                            <p style={{fontSize: 19, fontWeight: 200}}>{product.description}</p>
+                                                            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 30}}>
+                                                                <p style={{fontSize: 19, fontWeight: 200, margin: 'auto', marginRight: 12}}>{product.cuisine + " Cuisine"}</p>
+                                                                <img src={flagMapping[product.cuisine]} style={{height: 30, width: 'fit-content', borderRadius: '50%'}}/>
+                                                            </div>
+                                                            <img src={product.imageurl} style={{ height: 250, width: 'fit-content', marginBottom: 20, borderRadius: 5 }} alt='' />
+                                                            <Button id={product.name} style={{marginTop: 5, marginBottom: 10, width: 'fit-content', background: '#aaf0d1', padding: 10}}>add to Cart <ShoppingCartIcon style={{marginLeft: 5}}/></Button>
+                                                        </Paper>
+                                                    </Grid>
+                                                )
+                                            }
                                         })}
                                     </Grid>
                                 </Grid>

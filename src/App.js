@@ -12,22 +12,26 @@ function App() {
   document.body.style = 'background: #f3f3f2';
   return (
     <div className="App">
-      <Appbar/>
       <Router>
         <Switch>
           <Route exact path='/'>
+            <Appbar/>
             <SignInPage/>
           </Route>
           <Route exact path='/register'>
+            <Appbar/>
             <RegisterPage/>
           </Route>
           <Route exact path='/food-box-home'>
+            <Appbar/>
             <FoodboxPage/>
           </Route>
           <Route exact path='/admin'>
+            <Appbar/>
             <AdminPage/>
           </Route>
           <Route exact path='/product-edit'>
+            <Appbar/>
             <ProductEditPage/>
           </Route>
         </Switch>

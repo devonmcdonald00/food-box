@@ -117,7 +117,7 @@ export default function AddProductForm(props) {
         if(addProductResponse){
             setError({display: 0, header: "", message: ""})
             setSuccess(1)
-            props.getProduct();
+            props.getProducts();
         }
         else{
             setSuccess(0)
@@ -169,7 +169,7 @@ export default function AddProductForm(props) {
                             value={cuisine}
                             onChange={(e) => {setCuisine(e.target.value)}}
                             input={<BootstrapInput/>}
-                            style={{marginTop: 20}}
+                            style={{margin: 20}}
                         >
                             {
                                 props.cuisines &&
@@ -180,15 +180,6 @@ export default function AddProductForm(props) {
                                 })
                             }
                         </Select>
-                        <StyledTextField
-                            required
-                            id="cuisine"
-                            label="Cuisine"
-                            placeholder="product new cuisine"
-                            className={classes.textfields}
-                            value={cuisine}
-                            onChange={(e) => {setCuisine(e.target.value)}}
-                        />
                         <StyledTextField
                             required
                             id="imageurl"
