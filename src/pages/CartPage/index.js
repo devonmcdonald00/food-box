@@ -148,30 +148,33 @@ export default function CartPage({ setCartCounter }) {
                 <Typography className={classes.formTitle} style={{paddingTop: 0, margin: 'auto'}}>
                     Payment Submission
                 </Typography>
-                <Elements stripe={stripePromise}>
-                    <CardElement
-                        options={{
-                            style: {
-                                base: {
-                                    color: "black",
-                                    fontWeight: 500,
-                                    fontFamily: "Roboto, Open Sans, Segoe UI, sans-serif",
-                                    fontSize: "16px",
-                                    fontSmoothing: "antialiased",
-                                    '::placeholder': {
-                                        color: '#aab7c4',
+                <div style={{width: 400, margin: 'auto'}}>
+                    <Elements stripe={stripePromise}>
+                        <CardElement
+                            options={{
+                                style: {
+                                    base: {
+                                        color: "black",
+                                        fontWeight: 500,
+                                        fontFamily: "Roboto, Open Sans, Segoe UI, sans-serif",
+                                        fontSize: "16px",
+                                        fontSmoothing: "antialiased",
+                                        '::placeholder': {
+                                            color: '#aab7c4',
+                                        },
+                                        ":-webkit-autofill": {
+                                            color: "#fce883"
+                                        },
                                     },
-                                    ":-webkit-autofill": {
-                                        color: "#fce883"
-                                      },
+                                    invalid: {
+                                        color: '#9e2146',
+                                    },
                                 },
-                                invalid: {
-                                    color: '#9e2146',
-                                },
-                            },
-                        }}
-                    />
-                </Elements>
+                            }}
+                        />
+                    </Elements>
+                </div>
+                
                 <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
                     <Button style={{width: 'fit-content', background: '#aaf0d1', margin: 'auto'}}>
                         Submit Order
