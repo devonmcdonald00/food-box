@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { Paper, Typography, Button, IconButton } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router-dom'
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import {CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+
+
 
 var formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -23,6 +26,17 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         alignItems: 'center',
         paddingBottom: 80
+    },
+    paymentContainer: {
+        width: '70%',
+        padding: 20,
+        margin: 'auto',
+        marginTop: 50,
+        minWidth: 670,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingBottom: 30
     },
     formTitle: {
         fontSize: 30,
@@ -67,11 +81,15 @@ const useStyles = makeStyles((theme) => ({
         top: -10
     }
 }));
+
+const stripePromise = loadStripe('pk_test_51HeXZCBHhe5b3zt2oVYEtSM8hHm6wnEhfjDVNdxiGOYQejWYs3UK3ZAYpNdZRQFZ50Fmp6pfyfOQJgyDxyal9Ts000FivUv3Re')
+
 export default function CartPage({ setCartCounter }) {
     const classes = useStyles();
     const [cart, setCart] = useState([])
     const [total, setTotal] = useState(0)
     const history = useHistory();
+
 
     useEffect(() => {
         let newCart = []
@@ -92,7 +110,9 @@ export default function CartPage({ setCartCounter }) {
 
     return (
         <div>
+            
             <Paper className={classes.cartContainer}>
+            
                 <Typography className={classes.formTitle}>
                     Order Summary
                 </Typography>
@@ -124,6 +144,41 @@ export default function CartPage({ setCartCounter }) {
                         <Button onClick={() => {history.push('/food-box-home')}} style={{width: 'fit-content', background: '#aaf0d1', marginLeft: 20}}>Add</Button>
                     </Paper>
             </Paper>
+            <Paper className={classes.paymentContainer}>
+                <Typography className={classes.formTitle} style={{paddingTop: 0, margin: 'auto'}}>
+                    Payment Submission
+                </Typography>
+                <Elements stripe={stripePromise}>
+                    <CardElement
+                        options={{
+                            style: {
+                                base: {
+                                    color: "black",
+                                    fontWeight: 500,
+                                    fontFamily: "Roboto, Open Sans, Segoe UI, sans-serif",
+                                    fontSize: "16px",
+                                    fontSmoothing: "antialiased",
+                                    '::placeholder': {
+                                        color: '#aab7c4',
+                                    },
+                                    ":-webkit-autofill": {
+                                        color: "#fce883"
+                                      },
+                                },
+                                invalid: {
+                                    color: '#9e2146',
+                                },
+                            },
+                        }}
+                    />
+                </Elements>
+                <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
+                    <Button style={{width: 'fit-content', background: '#aaf0d1', margin: 'auto'}}>
+                        Submit Order
+                    </Button>
+                </div>
+            </Paper>
+            <div style={{height: 40}}></div>
         </div>
     )
 }

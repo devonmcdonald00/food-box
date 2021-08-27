@@ -5,6 +5,11 @@ import { Button, Grid, InputBase, Paper, Typography, Chip } from '@material-ui/c
 import SearchIcon from '@material-ui/icons/Search';
 import { alpha, makeStyles } from '@material-ui/core/styles';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import { loadStripe } from '@stripe/stripe-js';
+import {CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+
+const stripePromise = loadStripe('pk_test_51HeXZCBHhe5b3zt2oVYEtSM8hHm6wnEhfjDVNdxiGOYQejWYs3UK3ZAYpNdZRQFZ50Fmp6pfyfOQJgyDxyal9Ts000FivUv3Re')
 
 
 const useStyles = makeStyles((theme) => ({
@@ -217,10 +222,16 @@ export default function FoodboxPage({cartCounter, setCartCounter}) {
         console.log(cart)
     }
 
+
     return (
         <div>
             <div>
                 <Paper className={classes.productContainer}>
+                    <Elements stripe={stripePromise}>
+                        <CardElement
+                        
+                        />
+                    </Elements>
                     <Typography className={classes.formTitle}>Food Item Selection</Typography>
                     <div className={classes.search} style={{ width: '100%', display: 'flex' }}>
                         <div style={{ margin: 'auto', width: '80%' }}>
