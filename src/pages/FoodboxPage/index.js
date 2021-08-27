@@ -249,6 +249,7 @@ export default function FoodboxPage({cartCounter, setCartCounter}) {
                                             className={classes.cuisineChip}
                                             style={{fontSize: 13, fontFamily: 'Balsamiq Sans', background: cuisineFilters[cuisine.cuisine] ? '#aaf0d1' : 'gray', color: cuisineFilters[cuisine.cuisine] ? 'black' : 'white'}}
                                             onClick={(e) => changeFilter(cuisine.cuisine)}
+                                            disabled={!cuisine.enabled}
                                         >
                                             {cuisine.cuisine}
                                         </Chip>
