@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Paper, Typography } from '@material-ui/core'
+import { Paper, Typography, Button, IconButton } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { useHistory } from 'react-router-dom'
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 
 var formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -18,7 +21,8 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingBottom: 80
     },
     formTitle: {
         fontSize: 30,
@@ -50,23 +54,28 @@ const useStyles = makeStyles((theme) => ({
         fontSize: 15,
         margin: 'auto',
         marginLeft: 10,
-        fontFamily: 'Rubik'
+        fontFamily: 'Rubik',
+        padding: 10
     },
     productQuantity: {
-        width: '50%',
         fontFamily: 'Rubik',
     },
-    productPrice: {
-        width: '50%',
+    productTotal: {
         fontFamily: 'Rubik',
+        position: 'absolute',
+        right: 50,
+        top: -10
     }
 }));
-export default function CartPage() {
+export default function CartPage({ setCartCounter }) {
     const classes = useStyles();
     const [cart, setCart] = useState([])
+    const [total, setTotal] = useState(0)
+    const history = useHistory();
 
     useEffect(() => {
         let newCart = []
+        let newTotal = 0;
         for (let key in JSON.parse(localStorage.getItem('cart'))){
             let newItem = {
                 'product': key,
@@ -74,10 +83,13 @@ export default function CartPage() {
                 'total': JSON.parse(localStorage.getItem('cart'))[key]['productTotal']
             }
             newCart.push(newItem)
+            newTotal += JSON.parse(localStorage.getItem('cart'))[key]['productTotal']
         }
         console.log(newCart)
         setCart(newCart)
+        setTotal(newTotal);
     }, [])
+
     return (
         <div>
             <Paper className={classes.cartContainer}>
@@ -87,7 +99,7 @@ export default function CartPage() {
                 <Paper className={classes.paper}>
                     <Typography className={classes.productHeader}>Item</Typography>
                     <div style={{display: 'flex', width: '40%', justifyContent: 'space-evenly'}}>
-                        <Typography className={classes.productHeader} style={{width: '50%'}}>Quantity</Typography>
+                        <Typography className={classes.productHeader} style={{width: '50%', marginLeft: 0}}>Quantity</Typography>
                         <Typography className={classes.productHeader} style={{width: '50%'}}>Item Total</Typography>
                     </div>
                 </Paper>
@@ -96,14 +108,21 @@ export default function CartPage() {
                             return(
                                 <Paper className={classes.paper}>
                                     <Typography className={classes.productName}>{item.product}</Typography>
-                                    <div style={{display: 'flex', width: '40%', justifyContent: 'space-evenly'}}>
-                                        <Typography className={classes.productQuantity}>{item.quantity}</Typography>
+                                    <div style={{display: 'flex', width: '40%', justifyContent: 'space-evenly', position: 'relative'}}>
+                                        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', left: 40, position: 'absolute', top: -10}}>
+                                            <Typography className={classes.productQuantity}>{item.quantity}</Typography>
+                                        </div>
                                         <Typography className={classes.productTotal}>{formatter.format(item.total)}</Typography>
                                     </div>
                                 </Paper>
                             )
                         })
                     }
+                    <Paper style={{marginTop: 20, display: 'flex'}}>
+                        <Typography className={classes.productHeader} >Total: {formatter.format(total)}</Typography>
+                        <Button onClick={() => {localStorage.removeItem('cart'); history.push('/food-box-home'); setCartCounter(0)}} style={{width: 'fit-content', background: '#aaf0d1', marginLeft: 20}}>Clear Cart</Button>
+                        <Button onClick={() => {history.push('/food-box-home')}} style={{width: 'fit-content', background: '#aaf0d1', marginLeft: 20}}>Add</Button>
+                    </Paper>
             </Paper>
         </div>
     )

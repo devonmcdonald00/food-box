@@ -51,7 +51,7 @@ function App() {
           </Route>
           <Route exact path='/cart'>
             <Appbar cartCounter={cartCounter}/>
-            <CartPage/>
+            <CartPage setCartCounter={setCartCounter}/>
           </Route>
         </Switch>
       </Router>
