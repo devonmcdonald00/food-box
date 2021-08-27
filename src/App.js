@@ -9,6 +9,12 @@ import { HashRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import ProductEditPage from './pages/ProductEditPage';
 import { useState, useEffect } from 'react'
 import CartPage from './pages/CartPage';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import OrderSummaryPage from './pages/OrderSummaryPage';
+
+const stripePromise = loadStripe('pk_test_51HeXZCBHhe5b3zt2oVYEtSM8hHm6wnEhfjDVNdxiGOYQejWYs3UK3ZAYpNdZRQFZ50Fmp6pfyfOQJgyDxyal9Ts000FivUv3Re')
+
 
 function App() {
   document.body.style = 'background: #f3f3f2';
@@ -51,7 +57,13 @@ function App() {
           </Route>
           <Route exact path='/cart'>
             <Appbar cartCounter={cartCounter}/>
-            <CartPage setCartCounter={setCartCounter}/>
+            <Elements stripe={stripePromise}>
+              <CartPage setCartCounter={setCartCounter}/>
+            </Elements>
+          </Route>
+          <Route exact path='/order-summary'>
+            <Appbar cartCounter={cartCounter}/>
+            <OrderSummaryPage/>
           </Route>
         </Switch>
       </Router>

@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Paper, Typography, Button, IconButton } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router-dom'
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import {CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { Message } from 'semantic-ui-react'
 
 
 
@@ -82,14 +81,14 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const stripePromise = loadStripe('pk_test_51HeXZCBHhe5b3zt2oVYEtSM8hHm6wnEhfjDVNdxiGOYQejWYs3UK3ZAYpNdZRQFZ50Fmp6pfyfOQJgyDxyal9Ts000FivUv3Re')
-
 export default function CartPage({ setCartCounter }) {
     const classes = useStyles();
     const [cart, setCart] = useState([])
     const [total, setTotal] = useState(0)
     const history = useHistory();
-
+    const stripe = useStripe();
+    const elements = useElements();
+    const [error, setError] = useState({display: 0, header: "", message: ""})
 
     useEffect(() => {
         let newCart = []
@@ -108,13 +107,56 @@ export default function CartPage({ setCartCounter }) {
         setTotal(newTotal);
     }, [])
 
+    const handlePaymentSubmission = async (event) => {
+        event.preventDefault();
+        if(!stripe || !elements){
+            return;
+        }
+
+        const card = elements.getElement(CardElement);
+        const result = await stripe.createToken(card);
+
+        if(result.error){
+            console.log(result.error.message);
+            setError({display: 1, header: "Payment Error", message: result.error.message})
+        }
+        else {
+            await stripeTokenHandler(result.token);
+        }
+    }
+
+    const stripeTokenHandler = async (token) => {
+        const paymentData = {"token": token["id"], "total": total*100}
+
+        const response = await fetch('http://localhost:3001/charge', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(paymentData),
+          });
+        
+          const responseJSON = await response.json();
+          console.log(responseJSON)
+          if(responseJSON.status === 'succeeded'){
+            console.log('navigate to order success page');
+            localStorage.removeItem('cart')
+            setCartCounter(0)
+            localStorage.setItem('order', JSON.stringify(responseJSON))
+            history.push('/order-summary')
+          }
+          else{
+            setError(1);
+          }
+        //return response.json();
+    }
+
     return (
         <div>
-            
             <Paper className={classes.cartContainer}>
             
                 <Typography className={classes.formTitle}>
-                    Order Summary
+                    Cart Summary
                 </Typography>
                 <Paper className={classes.paper}>
                     <Typography className={classes.productHeader}>Item</Typography>
@@ -148,38 +190,46 @@ export default function CartPage({ setCartCounter }) {
                 <Typography className={classes.formTitle} style={{paddingTop: 0, margin: 'auto'}}>
                     Payment Submission
                 </Typography>
-                <div style={{width: 400, margin: 'auto'}}>
-                    <Elements stripe={stripePromise}>
-                        <CardElement
-                            options={{
-                                style: {
-                                    base: {
-                                        color: "black",
-                                        fontWeight: 500,
-                                        fontFamily: "Roboto, Open Sans, Segoe UI, sans-serif",
-                                        fontSize: "16px",
-                                        fontSmoothing: "antialiased",
-                                        '::placeholder': {
-                                            color: '#aab7c4',
+                <form onSubmit={handlePaymentSubmission}>
+                    <div style={{width: 400, margin: 'auto'}}>
+                            <CardElement
+                                options={{
+                                    style: {
+                                        base: {
+                                            color: "black",
+                                            fontWeight: 500,
+                                            fontFamily: "Roboto, Open Sans, Segoe UI, sans-serif",
+                                            fontSize: "16px",
+                                            fontSmoothing: "antialiased",
+                                            '::placeholder': {
+                                                color: '#aab7c4',
+                                            },
+                                            ":-webkit-autofill": {
+                                                color: "#fce883"
+                                            },
                                         },
-                                        ":-webkit-autofill": {
-                                            color: "#fce883"
+                                        invalid: {
+                                            color: '#9e2146',
                                         },
                                     },
-                                    invalid: {
-                                        color: '#9e2146',
-                                    },
-                                },
-                            }}
-                        />
-                    </Elements>
-                </div>
-                
-                <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
-                    <Button style={{width: 'fit-content', background: '#aaf0d1', margin: 'auto'}}>
-                        Submit Order
-                    </Button>
-                </div>
+                                }}
+                            />
+                    </div>
+                    
+                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
+                        <Button type="submit" style={{width: 'fit-content', background: '#aaf0d1', margin: 'auto'}} disabled={!stripe}>
+                            Submit Order
+                        </Button>
+                    </div>
+                    {
+                        error.display ?
+                        <Message negative onClick={e => setError(0)} style={{cursor: 'pointer', marginBottom: 20}}>
+                            <Message.Header>{error.header}</Message.Header>
+                            <p>{error.message}</p>
+                        </Message>
+                        : <></>
+                    }
+                </form>
             </Paper>
             <div style={{height: 40}}></div>
         </div>
