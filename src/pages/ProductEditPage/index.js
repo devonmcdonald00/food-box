@@ -92,7 +92,7 @@ export default function ProductEditPage() {
         console.log(enabled)
         e.preventDefault();
         console.log(e)
-        const editProduct = await fetch('http://localhost:8090/change_product', {
+        const editProduct = await fetch('https://sheltered-escarpment-17399.herokuapp.com/change_product', {
             method: 'POST',
             mode: 'cors',
             headers: {

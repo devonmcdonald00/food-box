@@ -128,7 +128,7 @@ export default function CartPage({ setCartCounter }) {
     const stripeTokenHandler = async (token) => {
         const paymentData = {"token": token["id"], "total": total*100}
 
-        const response = await fetch('http://localhost:3001/charge', {
+        const response = await fetch('https://sheltered-escarpment-17399.herokuapp.com/charge', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'

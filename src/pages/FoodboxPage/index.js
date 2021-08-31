@@ -118,7 +118,7 @@ export default function FoodboxPage({cartCounter, setCartCounter}) {
     useEffect(() => {
         const getAdmin = async () => {
             console.log(username)
-            const admin = await fetch("http://localhost:8090/check_admin", {
+            const admin = await fetch("https://sheltered-escarpment-17399.herokuapp.com/check_admin", {
                 method: "POST",
                 mode: "cors",
                 headers: {
@@ -145,7 +145,7 @@ export default function FoodboxPage({cartCounter, setCartCounter}) {
 
 
         const getProducts = async () => {
-            const products = await fetch("http://localhost:8090/get_products", {
+            const products = await fetch("https://sheltered-escarpment-17399.herokuapp.com/get_products", {
                 method: "GET",
                 mode: 'cors',
                 headers : {
@@ -158,7 +158,7 @@ export default function FoodboxPage({cartCounter, setCartCounter}) {
         }
 
         const getCuisines = async () => {
-            const cuisines = await fetch('http://localhost:8090/get_cuisines', {
+            const cuisines = await fetch('https://sheltered-escarpment-17399.herokuapp.com/get_cuisines', {
                 method: 'GET',
                 mode: 'cors',
             })

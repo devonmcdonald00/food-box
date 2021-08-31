@@ -75,7 +75,7 @@ export default function CuisineForm(props) {
 
     const changeCuisine = async (cuisine, enabled) => {
 
-        const changeCuisine = await fetch('http://localhost:8090/change_cuisine', {
+        const changeCuisine = await fetch('https://sheltered-escarpment-17399.herokuapp.com/change_cuisine', {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -100,7 +100,7 @@ export default function CuisineForm(props) {
     }
 
     const addCuisine = async () => {
-        const addCuisine = await fetch('http://localhost:8090/add_cuisine', {
+        const addCuisine = await fetch('https://sheltered-escarpment-17399.herokuapp.com/add_cuisine', {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -126,7 +126,7 @@ export default function CuisineForm(props) {
     }
 
     const deleteCuisine = async (cuisine) => {
-        const deleteCuisine = await fetch('http://localhost:8090/delete_cuisine', {
+        const deleteCuisine = await fetch('https://sheltered-escarpment-17399.herokuapp.com/delete_cuisine', {
             method: 'POST',
             mode: 'cors',
             headers: {

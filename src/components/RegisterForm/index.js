@@ -65,7 +65,7 @@ export default function RegisterForm() {
       }
       else{
           console.log(username)
-          const userExists = await fetch('http://localhost:8090/user_exists', {
+          const userExists = await fetch('https://sheltered-escarpment-17399.herokuapp.com/user_exists', {
               method: 'POST',
               mode: 'cors',
               headers : {
@@ -83,7 +83,7 @@ export default function RegisterForm() {
           }
           else{
             console.log('form is valid... add user');
-            const addUser = await fetch('http://localhost:8090/add_user', {
+            const addUser = await fetch('https://sheltered-escarpment-17399.herokuapp.com/add_user', {
               method: 'POST',
               mode: 'cors',
               headers : {

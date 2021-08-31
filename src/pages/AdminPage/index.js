@@ -120,7 +120,7 @@ export default function AdminPage() {
 
     useEffect(() => {
         const getProducts = async () => {
-            const products = await fetch("http://localhost:8090/get_products", {
+            const products = await fetch("https://sheltered-escarpment-17399.herokuapp.com/get_products", {
                 method: "GET",
                 mode: 'cors',
                 headers : {
@@ -133,7 +133,7 @@ export default function AdminPage() {
         }
 
         const getCuisines = async () => {
-          const cuisines = await fetch('http://localhost:8090/get_cuisines', {
+          const cuisines = await fetch('https://sheltered-escarpment-17399.herokuapp.com/get_cuisines', {
               method: 'GET',
               mode: 'cors',
           })
@@ -148,7 +148,7 @@ export default function AdminPage() {
     }, [])
 
     const getProducts = async () => {
-      const products = await fetch("http://localhost:8090/get_products", {
+      const products = await fetch("https://sheltered-escarpment-17399.herokuapp.com/get_products", {
           method: "GET",
           mode: 'cors',
           headers : {
@@ -161,7 +161,7 @@ export default function AdminPage() {
     }
 
     const getCuisines = async () => {
-      const cuisines = await fetch('http://localhost:8090/get_cuisines', {
+      const cuisines = await fetch('https://sheltered-escarpment-17399.herokuapp.com/get_cuisines', {
           method: 'GET',
           mode: 'cors',
       })
@@ -182,7 +182,7 @@ export default function AdminPage() {
     }
 
     const productDelete = async (product) => {
-      const deleteProduct = await fetch('http://localhost:8090/delete_product', {
+      const deleteProduct = await fetch('https://sheltered-escarpment-17399.herokuapp.com/delete_product', {
         method: 'POST',
         mode: 'cors',
         headers : {

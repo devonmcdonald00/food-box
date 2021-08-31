@@ -96,7 +96,7 @@ export default function AddProductForm(props) {
 
     const addProduct = async (e) => {
         e.preventDefault();
-        const addProduct = await fetch('http://localhost:8090/add_product', {
+        const addProduct = await fetch('https://sheltered-escarpment-17399.herokuapp.com/add_product', {
             method: 'POST',
             mode: 'cors',
             headers: {

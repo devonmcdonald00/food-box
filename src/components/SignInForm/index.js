@@ -81,7 +81,7 @@ export default function SignInForm(props) {
     const checkSignIn = async (e) => {
         e.preventDefault();
 
-        const checkUser = await fetch('http://localhost:8090/user_exists', {
+        const checkUser = await fetch('https://sheltered-escarpment-17399.herokuapp.com/user_exists', {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -95,7 +95,7 @@ export default function SignInForm(props) {
         const checkUserResponse = await checkUser.json();
 
         if(checkUserResponse){
-            const checkSignIn = await fetch('http://localhost:8090/check_password', {
+            const checkSignIn = await fetch('https://sheltered-escarpment-17399.herokuapp.com/check_password', {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
